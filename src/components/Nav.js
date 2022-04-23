@@ -12,8 +12,8 @@ const Nav = () => {
   return (
     <>
       {/* <Drawer /> */}
-      <div className='bg-black flex justify-evenly items-center pl-[4em] py-[1.2em] w-full'>
-        <div className=' h-[12%] flex items-center justify-center'>
+      <div className='h-[15vh] bg-black flex justify-evenly items-center pl-[4em] py-[1.2em] w-full'>
+        <div className='flex items-center justify-center'>
           <span className='text-[45px] font-thin text-white'>
             <b className='text-blue-500 font-bold'>vime</b>soft
           </span>
