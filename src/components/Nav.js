@@ -52,14 +52,18 @@ const Nav = () => {
             <Avatar
               variant='rounded'
               sx={{
-                backgroundColor: 'white',
+                background: 'black',
                 width: 40,
                 height: 40,
                 color: 'black',
                 overflow: 'visible',
               }}
             >
-              F
+              <img
+                src='https://source.unsplash.com/random/40x40'
+                alt='profile'
+                className='bg-cover rounded-full'
+              />
               <StatusCircle bgColor='bg-green-500' />
             </Avatar>
           </div>

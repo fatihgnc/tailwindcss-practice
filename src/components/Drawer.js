@@ -33,7 +33,7 @@ const Drawer = () => {
       key={idx}
       className='w-full inline-flex gap-2 items-center justify-start pl-[10%] text-ellipsis whitespace-nowrap overflow-hidden'
     >
-      <div className='flex-shrink-0 w-[20px] h-[20px] rounded-sm bg-gray-600 text-white text-[10px] m-2 flex items-center justify-center'>
+      <div className='flex-shrink-0 w-[20px] h-[20px] rounded-full bg-white text-black text-[10px] m-2 flex items-center justify-center'>
         {user[0]}
       </div>
       <span className='tracking-widest text-xs text-white' title={user}>
@@ -43,7 +43,7 @@ const Drawer = () => {
   ));
 
   return (
-    <div className='w-[20%] h-[85vh] overflow-scroll bg-black text-white'>
+    <div className='w-[20vw] h-[85vh] overflow-scroll bg-black text-white'>
       {/* drawer items */}
       <div className='w-100 h-100 py-4 px-6'>
         {/* dashboard */}
