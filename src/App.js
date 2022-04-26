@@ -1,13 +1,16 @@
 import Drawer from './components/Drawer';
 import Nav from './components/Nav';
-// import ChatScreen from './components/screens/ChatScreen';
+import ChatScreen from './components/screens/ChatScreen';
+import Wrapper from './components/Wrapper';
 
 function App() {
   return (
     <>
       <Nav />
-      <Drawer />
-      {/* <ChatScreen /> */}
+      <Wrapper>
+        <Drawer />
+        <ChatScreen />
+      </Wrapper>
     </>
   );
 }
