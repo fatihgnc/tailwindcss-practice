@@ -7,11 +7,7 @@ import useChatScroll from '../hooks/useChatScroll';
 const getCurrentTime = () => new Date().toLocaleTimeString().slice(0, -3);
 
 const ChatScreen = () => {
-  const [showMessageReactionEmojis, setShowMessageReactionEmojis] =
-    useState(false);
   const [shouldShowEmojis, setShouldShowEmojis] = useState(false);
-  // const [selectedEmoji, setSelectedEmoji] = useState(null);
-  // const [selectedMessageId, setSelectedMessageId] = useState(null);
   const [messages, setMessages] = useState([
     {
       id: Date.now(),
@@ -35,10 +31,6 @@ const ChatScreen = () => {
     setShouldShowEmojis((oldState) => !oldState);
   };
 
-  const hideShowingReactionEmojis = () => {
-    if (showMessageReactionEmojis) setShowMessageReactionEmojis(false);
-  };
-
   const sendMessage = (_) => {
     const messageContent = msgRef.current.value;
     if (messageContent === 0) return;
@@ -56,10 +48,7 @@ const ChatScreen = () => {
   };
 
   return (
-    <div
-      className='flex-1 pt-4 h-[85vh]'
-      onMouseDown={hideShowingReactionEmojis}
-    >
+    <div className='flex-1 pt-4 h-[85vh]'>
       <div
         className='overflow-y-scroll overflow-x-hidden h-[75vh]'
         ref={messagesContainerRef}
@@ -72,21 +61,12 @@ const ChatScreen = () => {
             sendingDate={msg.sendingDate}
             messageContent={msg.messageContent}
             messageEmotes={msg.messageEmotes}
-            handleReactionEmojis={setShowMessageReactionEmojis}
-            showMessageReactionEmojis={showMessageReactionEmojis}
-            // onEmojiSelection={setSelectedEmoji}
-            // setMessageId={setSelectedMessageId}
           />
         ))}
       </div>
       <div className='fixed bottom-0 right-0 w-[80vw] px-8 pb-2'>
         {shouldShowEmojis && (
-          <Picker
-            // skinTone={SKIN_TONE_LIGHT}
-            native={true}
-            preload={false}
-            onEmojiClick={chooseEmoji}
-          />
+          <Picker native={true} preload={false} onEmojiClick={chooseEmoji} />
         )}
         <div className='relative border border-solid border-black rounded-md'>
           <EmojiEmotionsOutlined

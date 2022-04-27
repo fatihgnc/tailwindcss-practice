@@ -1,12 +1,17 @@
+import { useState } from 'react';
+
 const ChatMessage = (props) => {
+  const [showReactionEmojis, setShowReactionEmojis] = useState(false);
+
   return (
     <div
-      onDoubleClick={(e) => props.handleReactionEmojis((oldState) => !oldState)}
+      onMouseEnter={(e) => setShowReactionEmojis(true)}
+      onMouseLeave={(e) => setShowReactionEmojis(false)}
       className={`flex gap-2 justify-start min-w-[18.5%] w-fit max-w-[70%] ml-[10%] pl-1 pr-10 py-1 mb-3 bg-gray-100 transition hover:bg-gray-200 rounded-md relative`}
     >
       {/* reaction emojis */}
-      {props.showMessageReactionEmojis && (
-        <div className='absolute bottom-[-25px] right-[-40px] flex bg-yellow-200 z-10 rounded-xl min-w-fit px-2 py-1 gap-2 items-center'>
+      {showReactionEmojis && (
+        <div className='absolute bottom-[-25px] right-[-40px] flex bg-blue-500 z-10 rounded-xl min-w-fit px-2 py-1 gap-2 items-center'>
           <button
             // onMouseDown={(e) => {
             //   props.onEmojiSelection(e.target.textContent);
