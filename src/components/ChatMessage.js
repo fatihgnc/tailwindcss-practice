@@ -1,17 +1,29 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 const ChatMessage = (props) => {
   const [showReactionEmojis, setShowReactionEmojis] = useState(false);
+  const user = useSelector((state) => state.user);
+
+  const isMe = () => user.username === props.sender;
 
   return (
     <div
       onMouseEnter={(e) => setShowReactionEmojis(true)}
       onMouseLeave={(e) => setShowReactionEmojis(false)}
-      className={`flex gap-2 justify-start min-w-[18.5%] w-fit max-w-[70%] ml-[10%] pl-1 pr-10 py-1 mb-3 bg-gray-100 transition hover:bg-gray-200 rounded-md relative`}
+      className={`flex gap-2 justify-start min-w-[18.5%] w-fit max-w-[70%] ${
+        isMe()
+          ? 'ml-auto mr-[2%] flex-row-reverse pl-10 pr-1'
+          : 'ml-[2%] pl-1 pr-10'
+      }  py-1 mb-3 bg-gray-100 transition hover:bg-gray-200 rounded-md relative`}
     >
       {/* reaction emojis */}
       {showReactionEmojis && (
-        <div className='absolute bottom-[-25px] right-[-40px] flex bg-blue-500 z-10 rounded-xl min-w-fit px-2 py-1 gap-2 items-center'>
+        <div
+          className={`absolute bottom-[-25px] ${
+            isMe() ? 'left-[-40px]' : 'right-[-40px]'
+          } flex bg-blue-500 z-10 rounded-xl min-w-fit px-2 py-1 gap-2 items-center`}
+        >
           <button
             // onMouseDown={(e) => {
             //   props.onEmojiSelection(e.target.textContent);
@@ -76,7 +88,11 @@ const ChatMessage = (props) => {
         </>
       )} */}
       {/* sending date */}
-      <small className='ml-12 font-extralight absolute bottom-1 right-1'>
+      <small
+        className={`font-extralight absolute bottom-1 ${
+          isMe() ? 'left-1' : 'right-1'
+        }`}
+      >
         {props.sendingDate}
       </small>
       {/* sender image */}
@@ -91,11 +107,15 @@ const ChatMessage = (props) => {
       </div>
       {/* message content */}
       <div className='pb-5 flex flex-col'>
-        <div className='pt-1'>
+        <div className={`pt-1 ${isMe() && 'text-right'}`}>
           <span className='font-bold text-lg'>{props.sender}</span>
         </div>
-        <div className='mt-1'>
-          <p className='text-sm font-light w-full break-all inline-block'>
+        <div>
+          <p
+            className={`text-sm font-light w-full break-all inline-block ${
+              isMe() && 'text-right'
+            }`}
+          >
             {props.messageContent}
           </p>
           {props.messageEmotes.length > 0 &&

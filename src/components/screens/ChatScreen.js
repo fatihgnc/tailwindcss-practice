@@ -38,7 +38,7 @@ const ChatScreen = () => {
       ...oldMessages,
       {
         id: Date.now(),
-        sender: 'mysterious user',
+        sender: 'fatihthebach',
         sendingDate: getCurrentTime(),
         messageContent,
         messageEmotes: [],
@@ -48,7 +48,7 @@ const ChatScreen = () => {
   };
 
   return (
-    <div className='flex-1 pt-4 h-[85vh]'>
+    <div className='flex-1 pt-4 h-[85vh] w-full'>
       <div
         className='overflow-y-scroll overflow-x-hidden h-[75vh]'
         ref={messagesContainerRef}
@@ -64,6 +64,7 @@ const ChatScreen = () => {
           />
         ))}
       </div>
+      {/* message input */}
       <div className='fixed bottom-0 right-0 w-[80vw] px-8 pb-2'>
         {shouldShowEmojis && (
           <Picker native={true} preload={false} onEmojiClick={chooseEmoji} />
