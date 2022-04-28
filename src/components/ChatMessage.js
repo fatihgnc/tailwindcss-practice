@@ -1,102 +1,110 @@
+import { Reply } from '@mui/icons-material';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 const ChatMessage = (props) => {
   const [showReactionEmojis, setShowReactionEmojis] = useState(false);
+  const [showReplyIcon, setShowReplyIcon] = useState(false);
+  const [reactedEmojis, setReactedEmojis] = useState({
+    '😃': { senders: [] },
+    '😍': { senders: [] },
+    '👍': { senders: [] },
+    '👎': { senders: [] },
+    '😡': { senders: [] },
+  });
+
   const user = useSelector((state) => state.user);
 
+  const handleReactionEmojiSelection = (emoji) => {
+    setReactedEmojis((oldState) => {
+      const selectedEmojiSenders = oldState[emoji].senders;
+      if (selectedEmojiSenders.includes(user.username)) {
+        const userIdx = selectedEmojiSenders.findIndex(
+          (sender) => sender === user.username
+        );
+        selectedEmojiSenders.splice(userIdx, 1);
+      } else {
+        selectedEmojiSenders.push(user.username);
+      }
+      return oldState;
+    });
+    setShowReactionEmojis(false);
+  };
+
+  const getSentEmojis = () =>
+    Object.keys(reactedEmojis).filter(
+      (emoji) => reactedEmojis[emoji].senders.length > 0
+    );
   const isMe = () => user.username === props.sender;
+  const isAnyEmojiSent = () =>
+    Object.values(reactedEmojis).some((emoji) => emoji.senders.length > 0);
 
   return (
     <div
-      onMouseEnter={(e) => setShowReactionEmojis(true)}
-      onMouseLeave={(e) => setShowReactionEmojis(false)}
-      className={`flex gap-2 justify-start min-w-[18.5%] w-fit max-w-[70%] ${
-        isMe()
-          ? 'ml-auto mr-[2%] flex-row-reverse pl-10 pr-1'
-          : 'ml-[2%] pl-1 pr-10'
-      }  py-1 mb-3 bg-gray-100 transition hover:bg-gray-200 rounded-md relative`}
+      onMouseEnter={(e) => {
+        setShowReactionEmojis(true);
+        setShowReplyIcon(true);
+      }}
+      onMouseLeave={(e) => {
+        setShowReactionEmojis(false);
+        setShowReplyIcon(false);
+      }}
+      className={`min-w-[15%] w-fit max-w-[70%] pl-2 pt-1 pr-10 pb-5 ${
+        isMe() ? 'ml-auto mr-[2%]' : 'ml-[2%]'
+      } mb-6 bg-gray-100 transition hover:bg-gray-200 rounded-sm relative`}
     >
+      {/* reply icon */}
+      {showReplyIcon && (
+        <Reply
+          className='absolute top-0 right-0 cursor-pointer'
+          sx={{ fontSize: '16px' }}
+        />
+      )}
       {/* reaction emojis */}
-      {showReactionEmojis && (
+      {showReactionEmojis && !isMe() && (
         <div
-          className={`absolute bottom-[-25px] ${
+          className={`absolute bottom-[-30px] ${
             isMe() ? 'left-[-40px]' : 'right-[-40px]'
-          } flex bg-blue-500 z-10 rounded-xl min-w-fit px-2 py-1 gap-2 items-center`}
+          } flex bg-blue-500 z-10 rounded-xl min-w-fit p-1 gap-1 text-sm items-center`}
         >
           <button
-            // onMouseDown={(e) => {
-            //   props.onEmojiSelection(e.target.textContent);
-            //   props.setMessageId(props.id);
-            // }}
+            onClick={(e) => handleReactionEmojiSelection(e.target.textContent)}
             className='rounded-full transition duration-300 hover:bg-white p-1 w-6 h-6 inline-flex items-center justify-center cursor-pointer'
           >
             😃
           </button>
           <button
-            // onMouseDown={(e) => {
-            //   props.onEmojiSelection(e.target.textContent);
-            //   props.setMessageId(props.id);
-            // }}
+            onClick={(e) => handleReactionEmojiSelection(e.target.textContent)}
             className='rounded-full transition duration-300 hover:bg-white p-1 w-6 h-6 inline-flex items-center justify-center cursor-pointer'
           >
             😍
           </button>
           <button
-            // onMouseDown={(e) => {
-            //   props.onEmojiSelection(e.target.textContent);
-            //   props.setMessageId(props.id);
-            // }}
+            onClick={(e) => handleReactionEmojiSelection(e.target.textContent)}
             className='rounded-full transition duration-300 hover:bg-white p-1 w-6 h-6 inline-flex items-center justify-center cursor-pointer'
           >
             👍
           </button>
           <button
-            // onMouseDown={(e) => {
-            //   props.onEmojiSelection(e.target.textContent);
-            //   props.setMessageId(props.id);
-            // }}
+            onClick={(e) => handleReactionEmojiSelection(e.target.textContent)}
             className='rounded-full transition duration-300 hover:bg-white p-1 w-6 h-6 inline-flex items-center justify-center cursor-pointer'
           >
             👎
           </button>
           <button
-            // onMouseDown={(e) => {
-            //   props.onEmojiSelection(e.target.textContent);
-            //   props.setMessageId(props.id);
-            // }}
+            onClick={(e) => handleReactionEmojiSelection(e.target.textContent)}
             className='rounded-full transition duration-300 hover:bg-white p-1 w-6 h-6 inline-flex items-center justify-center cursor-pointer'
           >
             😡
           </button>
         </div>
       )}
-      {/* message menu */}
-      {/* {shouldShowMessageMenu && (
-        <>
-          <div className='bg-black fixed top-0 right-0 bottom-0 left-0 z-10 opacity-25'></div>
-          <div className='absolute right-0 z-50 bottom-[-80px] flex flex-col w-[150px] min-w-fit h-fit bg-black text-white'>
-            <div className='flex gap-2 items-center transition duration-300 hover:bg-gray-700 px-3 py-2'>
-              <Reply className='' fontSize='small' />
-              <span className='text-md font-light'>Reply</span>
-            </div>
-            <div className='flex gap-2 items-center transition duration-300 hover:bg-gray-700 px-3 py-2'>
-              <EmojiEmotions className='' fontSize='small' />
-              <span className='text-md font-light'>React</span>
-            </div>
-          </div>
-        </>
-      )} */}
       {/* sending date */}
-      <small
-        className={`font-extralight absolute bottom-1 ${
-          isMe() ? 'left-1' : 'right-1'
-        }`}
-      >
+      <small className={`font-extralight absolute text-xs bottom-1 right-1`}>
         {props.sendingDate}
       </small>
       {/* sender image */}
-      <div className='pr-2'>
+      {/* <div className='pr-2'>
         <div className='w-[40px] h-[40px] bg-transparent text-white text-[20px] m-2 flex items-center justify-center'>
           <img
             src='https://source.unsplash.com/random/40x40'
@@ -104,24 +112,30 @@ const ChatMessage = (props) => {
             className='bg-cover rounded-full'
           />
         </div>
-      </div>
+      </div> */}
       {/* message content */}
-      <div className='pb-5 flex flex-col'>
-        <div className={`pt-1 ${isMe() && 'text-right'}`}>
+      <div>
+        {/* <div className={`pt-1`}>
           <span className='font-bold text-lg'>{props.sender}</span>
-        </div>
+        </div> */}
         <div>
-          <p
-            className={`text-sm font-light w-full break-all inline-block ${
-              isMe() && 'text-right'
-            }`}
-          >
+          <p className={`font-light break-all text-sm w-fit leading-tight`}>
             {props.messageContent}
           </p>
-          {props.messageEmotes.length > 0 &&
-            props.messageEmotes.map((emote, idx) => (
-              <span key={idx}>{emote}</span>
-            ))}
+          <div
+            onMouseEnter={(e) => setShowReactionEmojis(false)}
+            onMouseLeave={(e) => setShowReactionEmojis(true)}
+            className='min-w-fit absolute inline-flex justify-between bottom-[-18px] left-0 px-1 text-xs rounded-lg'
+          >
+            {isAnyEmojiSent() &&
+              getSentEmojis().map((emoji, idx) => (
+                <div key={idx}>
+                  <span className='mr-2'>
+                    {emoji + ': ' + reactedEmojis[emoji].senders.length}
+                  </span>
+                </div>
+              ))}
+          </div>
         </div>
       </div>
     </div>
