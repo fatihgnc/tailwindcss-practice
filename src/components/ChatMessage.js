@@ -1,6 +1,8 @@
 import { Reply } from '@mui/icons-material';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import ReactedEmoji from './ReactedEmoji';
+import ReactionEmojis from './ReactionEmojis';
 
 const ChatMessage = (props) => {
   const [showReactionEmojis, setShowReactionEmojis] = useState(false);
@@ -29,6 +31,7 @@ const ChatMessage = (props) => {
       return oldState;
     });
     setShowReactionEmojis(false);
+    setShowReplyIcon(false);
   };
 
   const getSentEmojis = () =>
@@ -62,57 +65,15 @@ const ChatMessage = (props) => {
       )}
       {/* reaction emojis */}
       {showReactionEmojis && !isMe() && (
-        <div
-          className={`absolute bottom-[-30px] ${
-            isMe() ? 'left-[-40px]' : 'right-[-40px]'
-          } flex bg-blue-500 z-10 rounded-xl min-w-fit p-1 gap-1 text-sm items-center`}
-        >
-          <button
-            onClick={(e) => handleReactionEmojiSelection(e.target.textContent)}
-            className='rounded-full transition duration-300 hover:bg-white p-1 w-6 h-6 inline-flex items-center justify-center cursor-pointer'
-          >
-            😃
-          </button>
-          <button
-            onClick={(e) => handleReactionEmojiSelection(e.target.textContent)}
-            className='rounded-full transition duration-300 hover:bg-white p-1 w-6 h-6 inline-flex items-center justify-center cursor-pointer'
-          >
-            😍
-          </button>
-          <button
-            onClick={(e) => handleReactionEmojiSelection(e.target.textContent)}
-            className='rounded-full transition duration-300 hover:bg-white p-1 w-6 h-6 inline-flex items-center justify-center cursor-pointer'
-          >
-            👍
-          </button>
-          <button
-            onClick={(e) => handleReactionEmojiSelection(e.target.textContent)}
-            className='rounded-full transition duration-300 hover:bg-white p-1 w-6 h-6 inline-flex items-center justify-center cursor-pointer'
-          >
-            👎
-          </button>
-          <button
-            onClick={(e) => handleReactionEmojiSelection(e.target.textContent)}
-            className='rounded-full transition duration-300 hover:bg-white p-1 w-6 h-6 inline-flex items-center justify-center cursor-pointer'
-          >
-            😡
-          </button>
-        </div>
+        <ReactionEmojis
+          isMe={isMe}
+          handleReactionEmojiSelection={handleReactionEmojiSelection}
+        />
       )}
       {/* sending date */}
       <small className={`font-extralight absolute text-xs bottom-1 right-1`}>
         {props.sendingDate}
       </small>
-      {/* sender image */}
-      {/* <div className='pr-2'>
-        <div className='w-[40px] h-[40px] bg-transparent text-white text-[20px] m-2 flex items-center justify-center'>
-          <img
-            src='https://source.unsplash.com/random/40x40'
-            alt='profile'
-            className='bg-cover rounded-full'
-          />
-        </div>
-      </div> */}
       {/* message content */}
       <div>
         {/* <div className={`pt-1`}>
@@ -129,11 +90,11 @@ const ChatMessage = (props) => {
           >
             {isAnyEmojiSent() &&
               getSentEmojis().map((emoji, idx) => (
-                <div key={idx}>
-                  <span className='mr-2'>
-                    {emoji + ': ' + reactedEmojis[emoji].senders.length}
-                  </span>
-                </div>
+                <ReactedEmoji
+                  reactedEmojis={reactedEmojis}
+                  emoji={emoji}
+                  key={idx}
+                />
               ))}
           </div>
         </div>

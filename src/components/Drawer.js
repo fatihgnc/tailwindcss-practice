@@ -31,7 +31,7 @@ const Drawer = () => {
   const usersList = usersInConvo.map((user, idx) => (
     <div
       key={idx}
-      className='w-full inline-flex gap-2 items-center justify-start pl-[10%] text-ellipsis whitespace-nowrap overflow-hidden'
+      className='w-full inline-flex gap-2 items-center justify-start px-2 text-ellipsis whitespace-nowrap overflow-hidden bg-gray-600'
     >
       <div className='flex-shrink-0 w-[20px] h-[20px] rounded-full bg-white text-black text-[10px] m-2 flex items-center justify-center'>
         {user[0]}

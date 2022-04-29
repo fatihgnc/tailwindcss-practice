@@ -1,13 +1,22 @@
 import ChatMessage from '../ChatMessage';
-import { EmojiEmotionsOutlined, Add, Send } from '@mui/icons-material';
+import {
+  EmojiEmotionsOutlined,
+  Add,
+  Send,
+  LocationOnOutlined,
+} from '@mui/icons-material';
 import Picker from 'emoji-picker-react';
 import { useRef, useState } from 'react';
 import useChatScroll from '../hooks/useChatScroll';
+import { useSelector } from 'react-redux';
 
 const getCurrentTime = () => new Date().toLocaleTimeString().slice(0, -3);
 
 const ChatScreen = () => {
-  const [shouldShowEmojis, setShouldShowEmojis] = useState(false);
+  const user = useSelector((state) => state.user);
+
+  const [showMenu, setShowMenu] = useState(false);
+  const [showEmojis, setShowEmojis] = useState(false);
   const [messages, setMessages] = useState([
     {
       id: Date.now(),
@@ -17,7 +26,7 @@ const ChatScreen = () => {
       messageEmotes: [],
     },
     {
-      id: Date.now(),
+      id: Date.now() + 1,
       sender: 'fatih',
       sendingDate: getCurrentTime(),
       messageContent:
@@ -32,11 +41,11 @@ const ChatScreen = () => {
 
   const chooseEmoji = (event, emojiObject) => {
     msgRef.current.value = msgRef.current.value + emojiObject.emoji;
-    setShouldShowEmojis(false);
+    setShowEmojis(false);
   };
 
   const handleShowingEmojis = () => {
-    setShouldShowEmojis((oldState) => !oldState);
+    setShowEmojis((oldState) => !oldState);
   };
 
   const sendMessage = (_) => {
@@ -56,9 +65,17 @@ const ChatScreen = () => {
   };
 
   return (
-    <div className='flex-1 pt-4 h-[85vh] w-full'>
+    <div className='flex-1 h-[85vh] w-full'>
+      <div className='h-[10vh] w-full bg-gray-700 px-12 py-2 mb-4 flex items-center gap-5'>
+        <img
+          className='w-[50px] h-[50px] rounded-full bg-white flex-shrink-0'
+          src='https://source.unsplash.com/random/50x50'
+          alt='profile'
+        />
+        <div className='flex-grow text-xl text-white'>{user.username}</div>
+      </div>
       <div
-        className='overflow-y-scroll overflow-x-hidden h-[75vh]'
+        className='overflow-y-scroll overflow-x-hidden h-[65vh]'
         ref={messagesContainerRef}
       >
         {messages.map((msg) => (
@@ -74,7 +91,7 @@ const ChatScreen = () => {
       </div>
       {/* message input */}
       <div className='fixed bottom-0 right-0 w-[80vw] px-8 pb-2'>
-        {shouldShowEmojis && (
+        {showEmojis && (
           <Picker native={true} preload={false} onEmojiClick={chooseEmoji} />
         )}
         <div className='relative border border-solid border-black rounded-md'>
@@ -94,7 +111,24 @@ const ChatScreen = () => {
               if (e.key === 'Enter') sendMessage(e);
             }}
           ></textarea>
-          <Add className='absolute top-[50%] translate-y-[-50%] right-[3.5%] cursor-pointer' />
+          {showMenu && (
+            <div className='absolute top-[-160%] right-[4%] bg-gray-800 text-white p-2 '>
+              <div className='mb-2 cursor-pointer'>
+                <Add sx={{ fontSize: '14px', marginRight: '.8em' }} />
+                <span className='text-sm font-light'>send a file</span>
+              </div>
+              <div className='cursor-pointer'>
+                <LocationOnOutlined
+                  sx={{ fontSize: '14px', marginRight: '.8em' }}
+                />
+                <span className='text-sm font-light'>send location</span>
+              </div>
+            </div>
+          )}
+          <Add
+            className='absolute top-[50%] translate-y-[-50%] right-[3.5%] cursor-pointer'
+            onClick={(e) => setShowMenu(!showMenu)}
+          />
           <Send
             fontSize='small'
             className='absolute top-[50%] translate-y-[-50%] right-[1%] cursor-pointer'
