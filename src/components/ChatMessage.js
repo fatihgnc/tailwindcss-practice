@@ -1,39 +1,43 @@
 import { Reply } from '@mui/icons-material';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import ReactedEmoji from './ReactedEmoji';
 import ReactionEmojis from './ReactionEmojis';
+import { messageActions } from './store/message';
 
 const ChatMessage = (props) => {
   const [showReactionEmojis, setShowReactionEmojis] = useState(false);
   const [showReplyIcon, setShowReplyIcon] = useState(false);
-  const [reactedEmojis, setReactedEmojis] = useState({
-    '😃': { senders: [] },
-    '😍': { senders: [] },
-    '👍': { senders: [] },
-    '👎': { senders: [] },
-    '😡': { senders: [] },
-  });
 
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
+  const messageState = useSelector((state) => state.message);
+  const message = messageState.messages.find(
+    (message) => message.id === props.id
+  );
+  const reactedEmojis = message.givenReactions;
 
   const handleReactionEmojiSelection = (emoji) => {
-    setReactedEmojis((oldState) => {
-      const selectedEmojiSenders = oldState[emoji].senders;
-      if (selectedEmojiSenders.includes(user.username)) {
-        const userIdx = selectedEmojiSenders.findIndex(
-          (sender) => sender === user.username
-        );
-        selectedEmojiSenders.splice(userIdx, 1);
-      } else {
-        selectedEmojiSenders.push(user.username);
-      }
-      return oldState;
-    });
+    dispatch(
+      messageActions.giveReactionToMessage({
+        username: user.username,
+        emoji,
+        id: props.id,
+      })
+    );
     setShowReactionEmojis(false);
     setShowReplyIcon(false);
   };
 
+  const printUsersWhoSentEmoji = (emoji) => {
+    return `${getSendersOfEmoji(emoji)
+      .map(JSON.stringify)
+      .join('\n')
+      .replace(/"/gm, '')}`;
+  };
+  const getSendersOfEmoji = (emoji) => {
+    return reactedEmojis[emoji].senders;
+  };
   const getSentEmojis = () =>
     Object.keys(reactedEmojis).filter(
       (emoji) => reactedEmojis[emoji].senders.length > 0
@@ -41,6 +45,10 @@ const ChatMessage = (props) => {
   const isMe = () => user.username === props.sender;
   const isAnyEmojiSent = () =>
     Object.values(reactedEmojis).some((emoji) => emoji.senders.length > 0);
+
+  const messageContainerClasses = `min-w-[15%] w-fit max-w-[70%] pl-2 pt-1 pr-12 text-white pb-3 transition rounded-xl relative ${
+    isMe() ? 'ml-auto mr-[2%] bg-blue-500 text-white' : 'ml-[2%] bg-gray-500'
+  } ${isAnyEmojiSent() ? 'mb-6' : 'mb-1'}`;
 
   return (
     <div
@@ -52,15 +60,18 @@ const ChatMessage = (props) => {
         setShowReactionEmojis(false);
         setShowReplyIcon(false);
       }}
-      className={`min-w-[15%] w-fit max-w-[70%] pl-2 pt-1 pr-10 pb-5 ${
-        isMe() ? 'ml-auto mr-[2%]' : 'ml-[2%]'
-      } mb-6 bg-gray-100 transition hover:bg-gray-200 rounded-sm relative`}
+      className={messageContainerClasses}
     >
       {/* reply icon */}
       {showReplyIcon && (
         <Reply
-          className='absolute top-0 right-0 cursor-pointer'
-          sx={{ fontSize: '16px' }}
+          onClick={(e) => {
+            props.setShowReplyBox(true);
+            props.setReplyingTo(message.sender);
+            props.setMessageBeingReplied(props.messageContent);
+          }}
+          className='absolute top-0 right-1 cursor-pointer'
+          sx={{ fontSize: '14px' }}
         />
       )}
       {/* reaction emojis */}
@@ -86,7 +97,7 @@ const ChatMessage = (props) => {
           <div
             onMouseEnter={(e) => setShowReactionEmojis(false)}
             onMouseLeave={(e) => setShowReactionEmojis(true)}
-            className='min-w-fit absolute inline-flex justify-between bottom-[-18px] left-0 px-1 text-xs rounded-lg'
+            className='min-w-fit absolute inline-flex justify-between bottom-[-15px] left-0 px-1 text-xs rounded-lg'
           >
             {isAnyEmojiSent() &&
               getSentEmojis().map((emoji, idx) => (
@@ -94,6 +105,7 @@ const ChatMessage = (props) => {
                   reactedEmojis={reactedEmojis}
                   emoji={emoji}
                   key={idx}
+                  printUsers={printUsersWhoSentEmoji}
                 />
               ))}
           </div>

@@ -5,7 +5,7 @@ const initialState = {
   messages: [
     {
       id: Date.now(),
-      sender: 'fatih',
+      sender: 'burak',
       sendingDate: getCurrentTime(),
       messageContent: 'Merhabalar!',
       givenReactions: {
