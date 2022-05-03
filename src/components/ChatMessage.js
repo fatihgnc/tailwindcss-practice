@@ -29,13 +29,13 @@ const ChatMessage = (props) => {
     setShowReplyIcon(false);
   };
 
-  const printUsersWhoSentEmoji = (emoji) => {
-    return `${getSendersOfEmoji(emoji)
+  const printReactionEmojiSenders = (emoji) => {
+    return `${getSendersOfReactionEmojis(emoji)
       .map(JSON.stringify)
       .join('\n')
       .replace(/"/gm, '')}`;
   };
-  const getSendersOfEmoji = (emoji) => {
+  const getSendersOfReactionEmojis = (emoji) => {
     return reactedEmojis[emoji].senders;
   };
   const getSentEmojis = () =>
@@ -105,7 +105,7 @@ const ChatMessage = (props) => {
                   reactedEmojis={reactedEmojis}
                   emoji={emoji}
                   key={idx}
-                  printUsers={printUsersWhoSentEmoji}
+                  printUsers={printReactionEmojiSenders}
                 />
               ))}
           </div>
