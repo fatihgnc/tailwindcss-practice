@@ -2,8 +2,25 @@ import { Reply } from '@mui/icons-material';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ReactedEmoji from './ReactedEmoji';
-import ReactionEmojis from './ReactionEmojis';
+import ReactionEmojisBox from './ReactionEmojisBox';
 import { messageActions } from './store/message';
+
+const printReactionEmojiSenders = (emoji, reactedEmojis) => {
+  return `${getSendersOfReactionEmojis(emoji, reactedEmojis)
+    .map(JSON.stringify)
+    .join('\n')
+    .replace(/"/gm, '')}`;
+};
+const getSendersOfReactionEmojis = (emoji, reactedEmojis) => {
+  return reactedEmojis[emoji].senders;
+};
+const getSentEmojis = (reactedEmojis) =>
+  Object.keys(reactedEmojis).filter(
+    (emoji) => reactedEmojis[emoji].senders.length > 0
+  );
+const isMe = (currentUser, sender) => currentUser === sender;
+const isAnyEmojiSent = (reactedEmojis) =>
+  Object.values(reactedEmojis).some((emoji) => emoji.senders.length > 0);
 
 const ChatMessage = (props) => {
   const [showReactionEmojis, setShowReactionEmojis] = useState(false);
@@ -29,26 +46,19 @@ const ChatMessage = (props) => {
     setShowReplyIcon(false);
   };
 
-  const printReactionEmojiSenders = (emoji) => {
-    return `${getSendersOfReactionEmojis(emoji)
-      .map(JSON.stringify)
-      .join('\n')
-      .replace(/"/gm, '')}`;
+  const replyToMessage = (_) => {
+    props.setShowReplyBox(true);
+    props.setReplyingTo(message.sender);
+    props.setMessageBeingReplied(props.messageContent);
   };
-  const getSendersOfReactionEmojis = (emoji) => {
-    return reactedEmojis[emoji].senders;
-  };
-  const getSentEmojis = () =>
-    Object.keys(reactedEmojis).filter(
-      (emoji) => reactedEmojis[emoji].senders.length > 0
-    );
-  const isMe = () => user.username === props.sender;
-  const isAnyEmojiSent = () =>
-    Object.values(reactedEmojis).some((emoji) => emoji.senders.length > 0);
 
-  const messageContainerClasses = `min-w-[15%] w-fit max-w-[70%] pl-2 pt-1 pr-12 text-white pb-3 transition rounded-xl relative ${
-    isMe() ? 'ml-auto mr-[2%] bg-blue-500 text-white' : 'ml-[2%] bg-gray-500'
-  } ${isAnyEmojiSent() ? 'mb-6' : 'mb-1'}`;
+  const messageContainerClasses = `min-w-[15%] w-fit max-w-[70%] pl-2 pt-1 pr-12 text-white mb-1 transition rounded-lg relative ${
+    isAnyEmojiSent(reactedEmojis) ? 'pb-8' : 'pb-3'
+  } ${
+    isMe(user.username, props.sender)
+      ? 'ml-auto mr-[2%] bg-blue-500 text-white'
+      : 'ml-[2%] bg-gray-500'
+  }`;
 
   return (
     <div
@@ -60,23 +70,20 @@ const ChatMessage = (props) => {
         setShowReactionEmojis(false);
         setShowReplyIcon(false);
       }}
+      onDoubleClick={replyToMessage}
       className={messageContainerClasses}
     >
       {/* reply icon */}
       {showReplyIcon && (
         <Reply
-          onClick={(e) => {
-            props.setShowReplyBox(true);
-            props.setReplyingTo(message.sender);
-            props.setMessageBeingReplied(props.messageContent);
-          }}
+          onClick={replyToMessage}
           className='absolute top-0 right-1 cursor-pointer'
           sx={{ fontSize: '14px' }}
         />
       )}
       {/* reaction emojis */}
-      {showReactionEmojis && !isMe() && (
-        <ReactionEmojis
+      {showReactionEmojis && !isMe(user.username, props.sender) && (
+        <ReactionEmojisBox
           isMe={isMe}
           handleReactionEmojiSelection={handleReactionEmojiSelection}
         />
@@ -94,13 +101,9 @@ const ChatMessage = (props) => {
           <p className={`font-light break-all text-sm w-fit leading-tight`}>
             {props.messageContent}
           </p>
-          <div
-            onMouseEnter={(e) => setShowReactionEmojis(false)}
-            onMouseLeave={(e) => setShowReactionEmojis(true)}
-            className='min-w-fit absolute inline-flex justify-between bottom-[-15px] left-0 px-1 text-xs rounded-lg'
-          >
-            {isAnyEmojiSent() &&
-              getSentEmojis().map((emoji, idx) => (
+          <div className='min-w-fit absolute inline-flex text-center bottom-1 left-2 text-xs'>
+            {isAnyEmojiSent(reactedEmojis) &&
+              getSentEmojis(reactedEmojis).map((emoji, idx) => (
                 <ReactedEmoji
                   reactedEmojis={reactedEmojis}
                   emoji={emoji}
