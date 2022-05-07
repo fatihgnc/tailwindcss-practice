@@ -32,6 +32,9 @@ const MessageInput = (props) => {
         sender: user.username,
         sendingDate: Date.now(),
         messageContent: message,
+        isReply: props.showReplyBox,
+        replyingTo: props.replyingTo,
+        messageBeingReplied: props.messageBeingReplied,
         givenReactions: {
           '😃': { senders: [] },
           '😍': { senders: [] },
@@ -42,6 +45,7 @@ const MessageInput = (props) => {
       })
     );
     msgRef.current.value = '';
+    props.setShowReplyBox(false);
   };
 
   return (

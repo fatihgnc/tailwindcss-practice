@@ -26,10 +26,6 @@ const ChatScreen = () => {
             <ChatMessage
               key={msg.id}
               id={msg.id}
-              sender={msg.sender}
-              sendingDate={msg.sendingDate}
-              messageContent={msg.messageContent}
-              messageEmotes={msg.messageEmotes}
               setReplyingTo={setReplyingTo}
               setMessageBeingReplied={setMessageBeingReplied}
               setShowReplyBox={setShowReplyBox}

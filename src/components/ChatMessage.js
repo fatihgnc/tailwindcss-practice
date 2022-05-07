@@ -39,7 +39,7 @@ const ChatMessage = (props) => {
       messageActions.giveReactionToMessage({
         username: user.username,
         emoji,
-        id: props.id,
+        id: message.id,
       })
     );
     setShowReactionEmojis(false);
@@ -49,16 +49,22 @@ const ChatMessage = (props) => {
   const replyToMessage = (_) => {
     props.setShowReplyBox(true);
     props.setReplyingTo(message.sender);
-    props.setMessageBeingReplied(props.messageContent);
+    props.setMessageBeingReplied(message.messageContent);
   };
 
-  const messageContainerClasses = `min-w-[15%] w-fit max-w-[70%] pl-2 pt-1 pr-12 text-white mb-1 transition rounded-lg relative ${
+  const messageContainerClasses = `min-w-[15%] w-fit max-w-[70%] pl-2 pt-1 text-white mb-1 transition rounded-lg relative ${
     isAnyEmojiSent(reactedEmojis) ? 'pb-8' : 'pb-3'
   } ${
-    isMe(user.username, props.sender)
+    isMe(user.username, message.sender)
       ? 'ml-auto mr-[2%] bg-blue-500 text-white'
       : 'ml-[2%] bg-gray-500'
   }`;
+
+  const replyContainerClasses = `px-2 py-1 ${
+    isMe(user.username, message.sender)
+      ? 'bg-blue-900 text-white'
+      : 'bg-gray-700'
+  } rounded-lg text-xs overflow-hidden w-full mb-1`;
 
   return (
     <div
@@ -73,6 +79,24 @@ const ChatMessage = (props) => {
       onDoubleClick={replyToMessage}
       className={messageContainerClasses}
     >
+      {message.isReply && (
+        <div className='pr-1'>
+          <div className={replyContainerClasses}>
+            <span
+              className={`inline-block ${
+                isMe(user.username, message.sender)
+                  ? 'text-blue-300'
+                  : 'text-gray-400'
+              }`}
+            >
+              {message.replyingTo}
+            </span>
+            <div className='max-h-[35px] h-fit'>
+              <small>{message.messageBeingReplied}</small>
+            </div>
+          </div>
+        </div>
+      )}
       {/* reply icon */}
       {showReplyIcon && (
         <Reply
@@ -82,7 +106,7 @@ const ChatMessage = (props) => {
         />
       )}
       {/* reaction emojis */}
-      {showReactionEmojis && !isMe(user.username, props.sender) && (
+      {showReactionEmojis && !isMe(user.username, message.sender) && (
         <ReactionEmojisBox
           isMe={isMe}
           handleReactionEmojiSelection={handleReactionEmojiSelection}
@@ -90,16 +114,16 @@ const ChatMessage = (props) => {
       )}
       {/* sending date */}
       <small className={`font-extralight absolute text-xs bottom-1 right-1`}>
-        {props.sendingDate}
+        {message.sendingDate}
       </small>
       {/* message content */}
       <div>
         {/* <div className={`pt-1`}>
           <span className='font-bold text-lg'>{props.sender}</span>
         </div> */}
-        <div>
+        <div className='pr-12'>
           <p className={`font-light break-all text-sm w-fit leading-tight`}>
-            {props.messageContent}
+            {message.messageContent}
           </p>
           <div className='min-w-fit absolute inline-flex text-center bottom-1 left-2 text-xs'>
             {isAnyEmojiSent(reactedEmojis) &&
