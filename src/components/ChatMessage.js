@@ -59,8 +59,9 @@ const ChatMessage = (props) => {
         setShowReactIcon(false);
         setShowReplyIcon(false);
       }}
+      onDoubleClick={replyToMessage}
     >
-      <div onDoubleClick={replyToMessage} className={messageContainerClasses}>
+      <div className={messageContainerClasses}>
         {message.isReply && (
           <div className='pr-1'>
             <div className={replyContainerClasses}>
