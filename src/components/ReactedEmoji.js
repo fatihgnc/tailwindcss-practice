@@ -1,13 +1,17 @@
+import { getSenderCount } from './helpers/emojiHelpers';
+
 const ReactedEmoji = (props) => {
   return (
     <div
       key={props.idx}
       title={props.printUsers(props.emoji, props.reactedEmojis)}
-      className='rounded-full text-center'
     >
-      <span className='inline-block mr-2'>
+      <span
+        className={`inline-block ${
+          getSenderCount(props.reactedEmojis) > 1 ? 'mr-2' : 'm-0'
+        }`}
+      >
         {props.emoji}
-        <small>{props.reactedEmojis[props.emoji].senders.length}</small>
       </span>
     </div>
   );
