@@ -1,20 +1,21 @@
-import { Provider } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Drawer from './components/Drawer';
 import Nav from './components/Nav';
 import ChatScreen from './components/screens/ChatScreen';
 import Wrapper from './components/Wrapper';
-
-import store from './components/store/index';
+import ReactionEmojisBox from './components/ReactionEmojisBox';
 
 function App() {
+  const ui = useSelector((state) => state.ui);
   return (
-    <Provider store={store}>
+    <>
+      {ui.showReactionEmojis && <ReactionEmojisBox />}
       <Nav />
       <Wrapper>
         <Drawer />
         <ChatScreen />
       </Wrapper>
-    </Provider>
+    </>
   );
 }
 
