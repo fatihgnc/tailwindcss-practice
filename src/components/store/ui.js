@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  showReactionEmojis: true,
+  showReactionEmojis: false,
 };
 
 const uiSlice = createSlice({
