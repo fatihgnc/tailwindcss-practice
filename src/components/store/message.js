@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const getCurrentTime = () => new Date().toLocaleTimeString().slice(0, -3);
 const initialState = {
+  selectedMessageId: null,
   messages: [
     {
       id: Date.now(),
@@ -56,6 +57,9 @@ const messageSlice = createSlice({
         selectedReactionSenders.splice(userIdx, 1);
       } else selectedReactionSenders.push(username);
       return state;
+    },
+    setCurrentMessageId: (state, action) => {
+      state.selectedMessageId = action.payload.id;
     },
   },
 });
