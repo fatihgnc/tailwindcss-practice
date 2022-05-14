@@ -21,6 +21,7 @@ const ReactionEmojisBox = (props) => {
         username,
       })
     );
+    dispatch(uiActions.hideReactionEmojis());
   };
 
   return (
