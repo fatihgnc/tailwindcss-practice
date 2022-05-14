@@ -20,6 +20,10 @@ const MessageInput = (props) => {
     setShowEmojis(false);
   };
 
+  const constrainInput = (e) => {
+    e.target.value = e.target.value.replace(/[\r\n\v]+/g, '');
+  };
+
   const toggleEmojis = () => {
     setShowEmojis((oldState) => !oldState);
   };
@@ -75,6 +79,7 @@ const MessageInput = (props) => {
           ref={msgRef}
           placeholder='Type your message..'
           className='ml-[8%] text-[15px] rounded-md px-5 py-3 outline-none bg-gray-500 text-white w-4/5 resize-none flex items-center justify-center'
+          onChange={constrainInput}
           onKeyUp={(e) => {
             if (e.key === 'Enter') {
               e.preventDefault();
